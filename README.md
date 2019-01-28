@@ -1,6 +1,7 @@
 # Exercise Tracker REST API
 
-#### A microservice project, part of Free Code Camp's curriculum
+### Build fullstack app similar to this:       
+https://fuschia-custard.glitch.me/
 
 ### User Stories
 
