@@ -8,28 +8,31 @@ exports.test = (req, res) => {
 
 // Create a new user
 exports.createUser = (req, res) => {
-  // post a username
-  // return object with username and id (from shortid);
-  // {
-  //   "username": "tony",
-  //   "_id": "SyDl2g5XN"
-  // }
-  
-  // get username
   const username = req.body.username;
+
+  if (!username) {
+    return res.send('You must enter a username');
+  }
   
-  // generate shortid
   const newShortId = shortid.generate();
   
-  // make new document for it
-  
-  // save to db
-  
-  // send response
-  return res.json({
+  // make new user document
+  const userModel = require('../models/user.model');
+  const userDoc = new userModel({
     username,
     _id: newShortId
   });
+  
+  // save it and send response
+  userDoc.save()
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "Something broke while creating the product"
+      });
+    });
 };
 
 // Add an exercise to a given user
