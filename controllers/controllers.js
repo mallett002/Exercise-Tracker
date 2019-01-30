@@ -11,7 +11,7 @@ exports.createUser = (req, res) => {
   const username = req.body.username;
 
   if (!username) {
-    return res.send('You must enter a username');
+    return res.status(400).send('You must enter a username');
   }
   
   const newShortId = shortid.generate();
