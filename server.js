@@ -20,6 +20,7 @@ mongoose.connect(process.env.MLAB_URI, {
     console.log('Could not connect to the database. Exiting now...', err);
     process.exit();
 });
+mongoose.set('useFindAndModify', false);
 
 // middlewares
 app.use(cors())
