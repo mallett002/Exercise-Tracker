@@ -87,7 +87,8 @@ exports.addExercise = (req, res) => {
   })
   .catch(err => {
     return res.status(500).send({
-      message: `Something went wrong updating product with id ${userId}`
+      message: `Something went wrong updating product with id ${userId}`,
+      error: err
     });
   });
 };
