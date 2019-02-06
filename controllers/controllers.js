@@ -1,6 +1,7 @@
 const shortid = require('shortid');
 const User = require('../models/user.model');
 const {isDateValid, generateNewTimeString} = require('../helpers');
+const moment = require('moment');
 
 // send default test message
 exports.test = (req, res) => {
@@ -51,21 +52,21 @@ exports.addExercise = (req, res) => {
   const description = req.body.description;
   const duration = req.body.duration;
   let date = req.body.date;
-  const dateIsValid = isDateValid(date);
-  let timeString;
+  let timeString
 
   if (!userId || !description || !duration) {
     return res.status(400).send('Fields marked with * are required');
   }
 
-  if (!dateIsValid) {
-    return res.status(400).send("The date needs to be entered as 'yyyy-mm-dd'");
-  }
-
-  if (!date) {
-    timeString = generateNewTimeString();
+  if (!date) { 
+    timeString = moment().format('dddd, MMM, Do YYYY');
   } else {
-    timeString = generateNewTimeString(date);
+    const momentDate = moment(date, 'YYYY-MM-DD');
+    if (!momentDate.isValid()) {
+      return res.status(404).send('Date format needs to be "YYYY-MM-DD"'); 
+    } else {
+      timeString = momentDate.format('dddd, MMM, Do YYYY');
+    }
   }
 
   const newExercise = {
@@ -89,7 +90,6 @@ exports.addExercise = (req, res) => {
       message: `Something went wrong updating product with id ${userId}`
     });
   });
-  
 };
 
 // Get exercise log for user
