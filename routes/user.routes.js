@@ -2,19 +2,17 @@
 
 const express = require('express');
 const router = express.Router();
-
-const controllers = require('../controllers/controllers');
-
-// test route
-router.get('/', controllers.test);
+const addUser = require('../controllers/addUser');
+const addExercise = require('../controllers/addExercise');
+const getUserExerciseLog = require('../controllers/getUserExerciseLog');
 
 // Create a new user
-router.post('/new-user', controllers.createUser);
+router.post('/new-user', addUser);
 
 // Add exercise for a user
-router.post('/add', controllers.addExercise);
+router.post('/add', addExercise);
 
 // Get a user's log data
-router.get('/log', controllers.getData);
+router.get('/log', getUserExerciseLog);
   
 module.exports = router;
