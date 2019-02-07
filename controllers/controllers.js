@@ -1,6 +1,5 @@
 const shortid = require('shortid');
 const User = require('../models/user.model');
-const {isDateValid, generateNewTimeString} = require('../helpers');
 const moment = require('moment');
 
 // send default test message
