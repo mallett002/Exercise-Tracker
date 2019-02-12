@@ -1,5 +1,4 @@
 const User = require('../models/user.model');
-let fromDateMS;
 
 module.exports = (req, res) => {
     const userId = req.query.userId;
@@ -30,29 +29,21 @@ module.exports = (req, res) => {
                 });
             }
 
-            // filter logs with {from} and {to} dates
-            if (fromDate) {
-                fromDateMS = new Date(fromDate).getTime();
-                logs = logs.filter(keepGreaterThanOrEqual);
-            }
-
-            if (toDate) {
-                // filter out those greater than toDate
-            }
+            let filteredLogs = logs
+                .filter(({date}) => !fromDate || date >= fromDate) // now < past date
+                .filter(({date}) => !toDate || date <= toDate);
 
             if (limit) {
-                // if numberItems > limit:
-                    // pop off end while numberItems !== limit
-                // else just return items
+                filteredLogs = filteredLogs.slice(0, limit);
             }
 
-            if (!logs.length) {
+            if (!filteredLogs.length) {
                 return res.json({
                     message: `User with id ${userId} has no logs with given parameters`
                 });
             }
 
-            res.json({logs});
+            res.json({filteredLogs});
 
         })
         .catch(err => {
@@ -61,23 +52,3 @@ module.exports = (req, res) => {
             });
         });
 };
-
-function keepGreaterThanOrEqual(log) {
-    let date = log.date;
-    
-    // remove "th" from "Wednesday, Feb, 6th 2019" bc new Date(dateString) doesn't work with 'th' or 'fth' in it
-    const dateEndingRegex = /\d+(rd|th|st|nd)/; // capture the date number ending (eg. 'th' from '6th')
-    const dateNumberRegex = /\d+/; // find date number (6)
-    const match = date.match(dateEndingRegex); // see if 'th' exists or just 6 without 'th'
-    const numberMatch = date.match(dateNumberRegex); // capture the number
-    
-    if (match) {
-        date = date.replace(dateEndingRegex, numberMatch[0]);
-    }
-    
-    // Turn Date Strings into ms since 1970
-    const logDateMS = new Date(date).getTime();
-
-    // Compare log date with fromDate
-    return logDateMS >= fromDateMS
-}

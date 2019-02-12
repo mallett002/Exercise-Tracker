@@ -7,20 +7,22 @@ module.exports = (req, res) => {
     const description = req.body.description;
     const duration = req.body.duration;
     let date = req.body.date;
-    let timeString
+    let dateInfo;
+    let timeString;
   
     if (!userId || !description || !duration) {
       return res.status(400).send('Fields marked with * are required');
     }
   
     if (!date) { 
-      timeString = moment().format('dddd, MMM, Do YYYY');
+        dateInfo = moment();
+        timeString = dateInfo.format('dddd, MMM, Do YYYY');
     } else {
-      const momentDate = moment(date, 'YYYY-MM-DD');
-      if (!momentDate.isValid()) {
+      dateInfo = moment(date, 'YYYY-MM-DD');
+      if (!dateInfo.isValid()) {
         return res.status(404).send('Date format needs to be "YYYY-MM-DD"'); 
       } else {
-        timeString = momentDate.format('dddd, MMM, Do YYYY');
+        timeString = dateInfo.format('dddd, MMM, Do YYYY');
       }
     }
   
@@ -28,7 +30,8 @@ module.exports = (req, res) => {
       userId,
       description,
       duration,
-      date: timeString
+      date: timeString, 
+      dateInfo
     };
   
     User.findOneAndUpdate({id: userId}, {$push: {logs: newExercise}}, {new: true})
