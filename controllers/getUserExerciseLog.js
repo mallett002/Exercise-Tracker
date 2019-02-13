@@ -1,11 +1,14 @@
 const User = require('../models/user.model');
+const moment = require('moment');
 
 module.exports = (req, res) => {
     const userId = req.query.userId;
     const fromDate = req.query.from;
     const toDate = req.query.to;
+    let fromDateInfo = fromDate ? moment(fromDate, 'YYYY-MM-DD') : null;
+    let toDateInfo = toDate ? moment(toDate, 'YYYY-MM-DD') : null;
     const limit = req.query.limit;
-
+    
     if (!userId) {
         return res.status(404).send({
             message: 'Please provide a user ID'
@@ -30,9 +33,10 @@ module.exports = (req, res) => {
             }
 
             let filteredLogs = logs
-                .filter(({date}) => !fromDate || date >= fromDate) // now < past date
-                .filter(({date}) => !toDate || date <= toDate);
-
+                .filter(({dateInfo}) => !fromDate || dateInfo >= fromDateInfo) 
+                .filter(({dateInfo}) => !toDate || dateInfo <= toDateInfo)
+                .sort((a, b) => a.dateInfo > b.dateInfo ? -1 : 1);
+                
             if (limit) {
                 filteredLogs = filteredLogs.slice(0, limit);
             }
